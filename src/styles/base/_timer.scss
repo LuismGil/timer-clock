@@ -49,6 +49,10 @@
     border: none;
     outline: none;
 
+    &-lengths:disabled {
+      color: $black;
+    }
+
     &-icons {
       transition: transform 0.3s ease-out;
 
