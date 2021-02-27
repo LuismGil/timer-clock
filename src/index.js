@@ -99,6 +99,7 @@ class TimerScreen extends React.Component {
       case 0:
         if (timerMinute === 0) {
           if (isSession) {
+            // this.audio.play(); // Aqui me esta dando problemas al actualizar el estado?
             this.setState({
               isSession: false,
             });
@@ -160,6 +161,14 @@ class TimerScreen extends React.Component {
 
     return (
       <div>
+        <audio
+          id="beep"
+          src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3"
+          ref={audio => {
+            this.audioBeep = audio;
+          }}
+        ></audio>
+
         <h1 className="container--title">TIMER CLOCK 25 + 5</h1>
         <div className="container--lengths">
           <BreakLength
