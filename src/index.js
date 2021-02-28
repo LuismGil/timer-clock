@@ -15,6 +15,8 @@ class TimerScreen extends React.Component {
       isPlay: false,
     };
 
+    this.audioRef = React.createRef();
+
     this.onIncreaseCounterSession = this.onIncreaseCounterSession.bind(this);
     this.onDecreaseCounterSession = this.onDecreaseCounterSession.bind(this);
     this.onIncreaseCounterBreak = this.onIncreaseCounterBreak.bind(this);
@@ -99,12 +101,13 @@ class TimerScreen extends React.Component {
       case 0:
         if (timerMinute === 0) {
           if (isSession) {
-            // this.audio.play(); // Aqui me esta dando problemas al actualizar el estado?
+            this.beep();
             this.setState({
               isSession: false,
             });
             this.onChangeIntervalLengths(isSession);
           } else {
+            this.beep();
             this.setState({
               isSession: true,
             });
@@ -138,6 +141,7 @@ class TimerScreen extends React.Component {
   onResetTimer = () => {
     this.onStopTimer();
     this.onPlayStopTimer(false);
+    this.resetBeep();
     this.setState({
       timerSecond: 0,
       timerMinute: 25,
@@ -147,6 +151,24 @@ class TimerScreen extends React.Component {
 
   onPlayStopTimer = isPlay => {
     this.setState({ isPlay: isPlay });
+  };
+
+  beep = () => {
+    const audio = this.audioRef.current;
+    if (audio.currentTime > 0) {
+      this.resetBeep();
+    }
+
+    audio.play();
+    setTimeout(() => {
+      this.resetBeep();
+    }, 1000);
+  };
+
+  resetBeep = () => {
+    const audio = this.audioRef.current;
+    audio.pause();
+    audio.currentTime = 0;
   };
 
   render() {
@@ -163,11 +185,9 @@ class TimerScreen extends React.Component {
       <div>
         <audio
           id="beep"
-          src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3"
-          ref={audio => {
-            this.audioBeep = audio;
-          }}
-        ></audio>
+          src="https://www.soundjay.com/appliances/sounds/microwave-oven-bell-1.mp3"
+          ref={this.audioRef}
+        />
 
         <h1 className="container--title">TIMER CLOCK 25 + 5</h1>
         <div className="container--lengths">
