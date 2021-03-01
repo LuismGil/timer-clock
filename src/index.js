@@ -5,14 +5,14 @@ import './styles/styles.scss';
 class TimerScreen extends React.Component {
   constructor(props) {
     super(props);
+    this.loop = undefined;
     this.state = {
       sessionLength: 25,
       breakLength: 5,
-      timerMinute: 25,
-      timerSecond: 0,
-      isSession: true,
-      interval: 0,
       isPlay: false,
+      clockTimer: 25 * 60,
+      currentTimer: 'Session',
+      loop: undefined,
     };
 
     this.audioRef = React.createRef();
@@ -21,136 +21,130 @@ class TimerScreen extends React.Component {
     this.onDecreaseCounterSession = this.onDecreaseCounterSession.bind(this);
     this.onIncreaseCounterBreak = this.onIncreaseCounterBreak.bind(this);
     this.onDecreaseCounterBreak = this.onDecreaseCounterBreak.bind(this);
-    this.onUpdateMinutes = this.onUpdateMinutes.bind(this);
-    this.onChangeIntervalLengths = this.onChangeIntervalLengths.bind(this);
-    this.onPlayTimer = this.onPlayTimer.bind(this);
-    this.decreaseTimer = this.decreaseTimer.bind(this);
-    this.onStopTimer = this.onStopTimer.bind(this);
+
+    this.onPlayPause = this.onPlayPause.bind(this);
     this.onResetTimer = this.onResetTimer.bind(this);
-    this.onPlayStopTimer = this.onPlayStopTimer.bind(this);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.loop);
   }
 
   onIncreaseCounterSession = () => {
-    this.setState(prevState => {
-      return {
-        sessionLength: prevState.sessionLength + 1,
-        timerMinute: prevState.sessionLength + 1,
-      };
-    });
+    const { sessionLength, isPlay, currentTimer } = this.state;
+    if (sessionLength < 60) {
+      if (!isPlay && currentTimer === 'Session') {
+        this.setState({
+          sessionLength: sessionLength + 1,
+          clockTimer: (sessionLength + 1) * 60,
+        });
+      } else {
+        this.setState({
+          sessionLength: sessionLength + 1,
+        });
+      }
+    }
   };
 
   onDecreaseCounterSession = () => {
-    this.setState(prevState => {
-      return {
-        sessionLength: prevState.sessionLength - 1,
-        timerMinute: prevState.sessionLength - 1,
-      };
-    });
+    const { sessionLength, isPlay, currentTimer } = this.state;
+    if (sessionLength > 1) {
+      if (!isPlay && currentTimer === 'Session') {
+        this.setState({
+          sessionLength: sessionLength - 1,
+          clockTimer: (sessionLength - 1) * 60,
+        });
+      } else {
+        this.setState({
+          sessionLength: sessionLength - 1,
+        });
+      }
+    }
   };
 
   onIncreaseCounterBreak = () => {
-    this.setState(prevState => {
-      return {
-        breakLength: prevState.breakLength + 1,
-      };
-    });
+    const { breakLength, isPlay, currentTimer } = this.state;
+    if (breakLength < 60) {
+      if (!isPlay && currentTimer === 'Break') {
+        this.setState({
+          breakLength: breakLength + 1,
+          clockTimer: (breakLength + 1) * 60,
+        });
+      } else {
+        this.setState({
+          breakLength: breakLength + 1,
+        });
+      }
+    }
   };
 
   onDecreaseCounterBreak = () => {
-    this.setState(prevState => {
-      return {
-        breakLength: prevState.breakLength - 1,
-      };
-    });
+    const { breakLength, isPlay, currentTimer } = this.state;
+
+    if (breakLength > 1) {
+      if (!isPlay && currentTimer === 'Break') {
+        this.setState({
+          breakLength: breakLength - 1,
+          clockTimer: (breakLength - 1) * 60,
+        });
+      } else {
+        this.setState({
+          breakLength: breakLength - 1,
+        });
+      }
+    }
   };
 
-  onUpdateMinutes = () => {
-    this.setState(prevState => {
-      return {
-        timerMinute: prevState.timerMinute - 1,
-      };
-    });
-  };
+  onPlayPause = () => {
+    const { isPlay } = this.state;
 
-  onChangeIntervalLengths = isSession => {
-    const { sessionLength, breakLength } = this.state;
+    if (isPlay) {
+      clearInterval(this.loop);
 
-    if (isSession) {
       this.setState({
-        timerMinute: sessionLength,
+        isPlay: false,
       });
     } else {
       this.setState({
-        isSession: false, // tal vez n funcione
-        timerMinute: breakLength,
+        isPlay: true,
       });
-    }
-  };
+      this.loop = setInterval(() => {
+        const {
+          clockTimer,
+          currentTimer,
+          breakLength,
+          sessionLength,
+        } = this.state;
 
-  onPlayTimer = () => {
-    let interval = setInterval(this.decreaseTimer, 1000);
-    this.onPlayStopTimer(true);
-    this.setState({
-      interval: interval,
-    });
-  };
-
-  decreaseTimer = () => {
-    const { timerSecond, timerMinute, isSession } = this.state;
-    switch (timerSecond) {
-      case 0:
-        if (timerMinute === 0) {
-          if (isSession) {
-            this.beep();
-            this.setState({
-              isSession: false,
-            });
-            this.onChangeIntervalLengths(isSession);
-          } else {
-            this.beep();
-            this.setState({
-              isSession: true,
-            });
-
-            this.onChangeIntervalLengths(isSession);
-          }
-        } else {
-          this.onUpdateMinutes();
+        if (clockTimer === 0) {
           this.setState({
-            timerSecond: 59,
+            currentTimer: currentTimer === 'Session' ? 'Break' : 'Session',
+            clockTimer:
+              currentTimer === 'Session'
+                ? breakLength * 60
+                : sessionLength * 60,
+          });
+          this.beep();
+        } else {
+          this.setState({
+            clockTimer: clockTimer - 1,
           });
         }
-
-        break;
-      default:
-        this.setState(prevState => {
-          return {
-            timerSecond: prevState.timerSecond - 1,
-          };
-        });
+      }, 1000);
     }
-  };
-
-  onStopTimer = () => {
-    const { interval } = this.state;
-    clearInterval(interval);
-    // this.onPlayTimer();
-    this.onPlayStopTimer(false);
   };
 
   onResetTimer = () => {
-    this.onStopTimer();
-    this.onPlayStopTimer(false);
     this.resetBeep();
     this.setState({
-      timerSecond: 0,
-      timerMinute: 25,
-      isSession: true,
+      sessionLength: 25,
+      breakLength: 5,
+      isPlay: false,
+      clockTimer: 25 * 60,
+      currentTimer: 'Session',
     });
-  };
 
-  onPlayStopTimer = isPlay => {
-    this.setState({ isPlay: isPlay });
+    clearInterval(this.loop);
   };
 
   beep = () => {
@@ -175,9 +169,8 @@ class TimerScreen extends React.Component {
     const {
       sessionLength,
       breakLength,
-      timerMinute,
-      timerSecond,
-      isSession,
+      clockTimer,
+      currentTimer,
       isPlay,
     } = this.state;
 
@@ -206,17 +199,14 @@ class TimerScreen extends React.Component {
         </div>
         <div className="container container--timer">
           <Timer
-            timerMinute={timerMinute}
-            timerSecond={timerSecond}
-            isSession={isSession}
+            currentTimer={currentTimer}
+            clockTimer={clockTimer}
             breakLength={breakLength}
-            updateTimerMinute={this.onUpdateMinutes}
-            changeInterval={this.onChangeIntervalLengths}
             onPlayStopTimer={this.onPlayStopTimer}
           />
           <ButtonsTimer
-            play={this.onPlayTimer}
-            stop={this.onStopTimer}
+            isPlay={isPlay}
+            onPlayPause={this.onPlayPause}
             reset={this.onResetTimer}
           />
         </div>
@@ -228,41 +218,25 @@ class TimerScreen extends React.Component {
 const BreakLength = props => {
   const { value, onIncreaseBreak, onDecreaseBreak, isPlay } = props;
 
-  const increaseBreak = () => {
-    if (value === 60) {
-      return;
-    } else {
-      onIncreaseBreak();
-    }
-  };
-
-  const decreaseBreak = () => {
-    if (value === 1) {
-      return;
-    } else {
-      onDecreaseBreak();
-    }
-  };
-
   return (
     <>
-      <div className="container container--lengths-break">
+      <div className="container container--lengths--spaces">
         <h4 id="break-label">Break Length</h4>
-        <div>
+        <div className="container--lengths--spaces-row">
           <button
             disabled={isPlay === true ? 'disabled' : ''}
             id="break-increment"
             className="container--btns container--btns-lengths"
-            onClick={increaseBreak}
+            onClick={onIncreaseBreak}
           >
             <i className="fas fa-arrow-up container--btns-icons"></i>
           </button>
-          {value}
+          <p id="break-length">{value}</p>
           <button
             disabled={isPlay === true ? 'disabled' : ''}
             id="break-decrement"
             className="container--btns container--btns-lengths"
-            onClick={decreaseBreak}
+            onClick={onDecreaseBreak}
           >
             <i className="fas fa-arrow-down container--btns-icons"></i>
           </button>
@@ -275,41 +249,25 @@ const BreakLength = props => {
 const SessionLength = props => {
   const { value, onIncreaseSession, onDecreaseSession, isPlay } = props;
 
-  const increaseSession = () => {
-    if (value === 60) {
-      return;
-    } else {
-      onIncreaseSession();
-    }
-  };
-
-  const decreaseSession = () => {
-    if (value === 1) {
-      return;
-    } else {
-      onDecreaseSession();
-    }
-  };
-
   return (
     <>
-      <div className="container container--lengths-session">
+      <div className="container container--lengths--spaces">
         <h4 id="session-label">Session Length</h4>
-        <div>
+        <div className="container--lengths--spaces-row">
           <button
             disabled={isPlay === true ? 'disabled' : ''}
             id="session-increment"
             className="container--btns container--btns-lengths"
-            onClick={increaseSession}
+            onClick={onIncreaseSession}
           >
             <i className="fas fa-arrow-up container--btns-icons"></i>
           </button>
-          {value}
+          <p id="session-length">{value}</p>
           <button
             disabled={isPlay === true ? 'disabled' : ''}
             id="session-decrement"
             className="container--btns container--btns-lengths"
-            onClick={decreaseSession}
+            onClick={onDecreaseSession}
           >
             <i className="fas fa-arrow-down container--btns-icons"></i>
           </button>
@@ -320,25 +278,24 @@ const SessionLength = props => {
 };
 
 const Timer = props => {
-  const { timerMinute, timerSecond, isSession } = props;
+  const { clockTimer, currentTimer } = props;
+
+  const convertToTime = count => {
+    let minutes = Math.floor(count / 60);
+    let seconds = count % 60;
+
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    seconds = seconds < 10 ? '0' + seconds : seconds;
+
+    return `${minutes}:${seconds}`;
+  };
   return (
     <>
-      <h4 id="timer-label">{isSession === true ? 'Session' : 'Break'}</h4>
-      <div id="timer-left" className="container--timer-time">
-        <p className="container--timer-time-panel">
-          {timerMinute === 0
-            ? '00'
-            : timerMinute < 10
-            ? '0' + timerMinute
-            : timerMinute}
-        </p>
-        <p className="container--timer-time-panel">:</p>
-        <p className="container--timer-time-panel">
-          {timerSecond === 0
-            ? '00'
-            : timerSecond < 10
-            ? '0' + timerSecond
-            : timerSecond}
+      <h4 id="timer-label">{currentTimer}</h4>
+
+      <div className="container--timer-time">
+        <p id="time-left" className="container--timer-time-panel">
+          {convertToTime(clockTimer)}
         </p>
       </div>
     </>
@@ -346,16 +303,22 @@ const Timer = props => {
 };
 
 const ButtonsTimer = props => {
-  const { play, stop, reset } = props;
+  const { onPlayPause, reset, isPlay } = props;
   return (
     <div>
       <div>
-        <button id="start_stop" onClick={play} className="container--btns">
-          <i className="fas fa-play container--btns-icons"></i>
+        <button
+          id="start_stop"
+          onClick={onPlayPause}
+          className="container--btns"
+        >
+          <i
+            className={`fas fa-${
+              isPlay ? 'pause' : 'play'
+            } container--btns-icons`}
+          ></i>
         </button>
-        <button onClick={stop} className="container--btns">
-          <i className="fas fa-pause container--btns-icons"></i>
-        </button>
+
         <button
           id="reset"
           onClick={reset}

@@ -18,14 +18,15 @@
     width: 80vw;
     margin: 30px auto;
 
-    &-break {
+    &--spaces {
       margin: 5px;
       height: 130px;
-    }
 
-    &-session {
-      margin: 5px;
-      height: 130px;
+      &-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+      }
     }
   }
 
