@@ -16,12 +16,10 @@ class TimerScreen extends React.Component {
     };
 
     this.audioRef = React.createRef();
-
     this.onIncreaseCounterSession = this.onIncreaseCounterSession.bind(this);
     this.onDecreaseCounterSession = this.onDecreaseCounterSession.bind(this);
     this.onIncreaseCounterBreak = this.onIncreaseCounterBreak.bind(this);
     this.onDecreaseCounterBreak = this.onDecreaseCounterBreak.bind(this);
-
     this.onPlayPause = this.onPlayPause.bind(this);
     this.onResetTimer = this.onResetTimer.bind(this);
   }
@@ -181,8 +179,7 @@ class TimerScreen extends React.Component {
           src="https://www.soundjay.com/appliances/sounds/microwave-oven-bell-1.mp3"
           ref={this.audioRef}
         />
-
-        <h1 className="container--title">TIMER CLOCK 25 + 5</h1>
+        <h1 className="container--title">TIMER CLOCK</h1>
         <div className="container--lengths">
           <BreakLength
             value={breakLength}
@@ -221,7 +218,9 @@ const BreakLength = props => {
   return (
     <>
       <div className="container container--lengths--spaces">
-        <h4 id="break-label">Break Length</h4>
+        <h4 id="break-label" className="container--lengths--spaces-title">
+          Break Length
+        </h4>
         <div className="container--lengths--spaces-row">
           <button
             disabled={isPlay === true ? 'disabled' : ''}
@@ -231,7 +230,9 @@ const BreakLength = props => {
           >
             <i className="fas fa-arrow-up container--btns-icons"></i>
           </button>
-          <p id="break-length">{value}</p>
+          <p id="break-length" className="container--lengths--spaces-digits">
+            {value}
+          </p>
           <button
             disabled={isPlay === true ? 'disabled' : ''}
             id="break-decrement"
@@ -252,7 +253,9 @@ const SessionLength = props => {
   return (
     <>
       <div className="container container--lengths--spaces">
-        <h4 id="session-label">Session Length</h4>
+        <h4 id="session-label" className="container--lengths--spaces-title">
+          Session Length
+        </h4>
         <div className="container--lengths--spaces-row">
           <button
             disabled={isPlay === true ? 'disabled' : ''}
@@ -262,7 +265,9 @@ const SessionLength = props => {
           >
             <i className="fas fa-arrow-up container--btns-icons"></i>
           </button>
-          <p id="session-length">{value}</p>
+          <p id="session-length" className="container--lengths--spaces-digits">
+            {value}
+          </p>
           <button
             disabled={isPlay === true ? 'disabled' : ''}
             id="session-decrement"
@@ -289,10 +294,12 @@ const Timer = props => {
 
     return `${minutes}:${seconds}`;
   };
+
   return (
     <>
-      <h4 id="timer-label">{currentTimer}</h4>
-
+      <h4 id="timer-label" className="container--timer-title">
+        {currentTimer}
+      </h4>
       <div className="container--timer-time">
         <p id="time-left" className="container--timer-time-panel">
           {convertToTime(clockTimer)}
@@ -306,7 +313,7 @@ const ButtonsTimer = props => {
   const { onPlayPause, reset, isPlay } = props;
   return (
     <div>
-      <div>
+      <div className="container--timer-btns">
         <button
           id="start_stop"
           onClick={onPlayPause}
@@ -318,7 +325,6 @@ const ButtonsTimer = props => {
             } container--btns-icons`}
           ></i>
         </button>
-
         <button
           id="reset"
           onClick={reset}
