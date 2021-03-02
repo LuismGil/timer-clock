@@ -2,4 +2,8 @@
 
 @import './base/base';
 
-@import './base/timer';
+@import './TimerClock';
+
+// Components
+@import './components/Timer';
+@import './components/Lengths';

@@ -1,0 +1,50 @@
+.container {
+  &--timer {
+    cursor: default;
+    width: 250px;
+
+    &-title {
+      font-size: 30px;
+      margin: 10px;
+    }
+
+    &-time {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: horizontal;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+      flex-direction: row;
+      font-size: 40px;
+      -webkit-box-pack: center;
+      -ms-flex-pack: center;
+      justify-content: center;
+
+      &-panel {
+        margin: 10px;
+      }
+    }
+
+    &-btns {
+      margin: 10px;
+    }
+  }
+
+  &--btns {
+    &-lengths:disabled {
+      color: $dark-orange;
+      pointer-events: none;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .container--timer {
+    width: 300px;
+
+    &-title {
+      font-size: 32px;
+    }
+  }
+}

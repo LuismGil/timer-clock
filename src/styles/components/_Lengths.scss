@@ -1,0 +1,63 @@
+.container--lengths {
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  cursor: default;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  margin: 30px auto;
+  width: 80vw;
+
+  &--spaces {
+    border: none;
+    height: 130px;
+    margin: 5px;
+
+    &-title {
+      font-size: 20px;
+      margin: 10px;
+    }
+
+    &-digits {
+      font-size: 20px;
+      margin-left: 5px;
+      margin-right: 5px;
+    }
+
+    &-row {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: horizontal;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+      flex-direction: row;
+      -webkit-box-pack: center;
+      -ms-flex-pack: center;
+      justify-content: center;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .container--lengths--spaces {
+    &-title {
+      font-size: 25px;
+      margin: 10px;
+    }
+
+    &-digits {
+      font-size: 25px;
+      margin-left: 5px;
+      margin-right: 5px;
+    }
+  }
+}

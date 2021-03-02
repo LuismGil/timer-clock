@@ -1,0 +1,43 @@
+.container {
+  border-radius: 15px;
+  border: 1px solid $dark-orange;
+  margin: 10px auto;
+  padding: 10px;
+  text-align: center;
+  width: 300px;
+
+  &--title {
+    cursor: default;
+    margin-top: 40px;
+    text-align: center;
+  }
+
+  &--btns {
+    background: none;
+    border: none;
+    color: $light-orange;
+    cursor: pointer;
+    font-size: 25px;
+    outline: none;
+
+    &-icons {
+      -webkit-transition: -webkit-transform 0.3s ease-out;
+      transition: -webkit-transform 0.3s ease-out;
+      -o-transition: transform 0.3s ease-out;
+      transition: transform 0.3s ease-out;
+      transition: transform 0.3s ease-out, -webkit-transform 0.3s ease-out;
+
+      &:hover {
+        -webkit-transform: scale(1.2);
+        -ms-transform: scale(1.2);
+        transform: scale(1.2);
+      }
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .container--title {
+    margin-top: 50px;
+  }
+}
