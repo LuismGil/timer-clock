@@ -9,3 +9,5 @@ The functionality of my project is very similar to that of a Pomodoro Timer.
 I developed it using reactjs and styled it using sass. Among other external sources like Font Awsome to get the icons.
 
 If you want you can see a [demo](https://luismgil.github.io/timer-clock).
+
+Note: This project is not yet fully completed, I plan to implement new features and give an up in the styles, studying possibilities.
